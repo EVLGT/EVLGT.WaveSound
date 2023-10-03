@@ -44,20 +44,20 @@ Choose your action:
             ProcessMenuInput(inputOption);
         }
 
-        private void ProcessMenuInput(int inputOption)
+        private async Task ProcessMenuInput(int inputOption)
         {
             switch (inputOption)
             {
                 case 1:
                     var videoUrl = GetYoutubeVideoUrl();
             
-                    _videoConverter.ConvertYoutubeToMp3(videoUrl);
+                    await _videoConverter.ConvertToMp3Async(videoUrl);
                 break;
 
                 case 2:
                     var mp3Path = GetMp3FilePath();
 
-                    _videoConverter.ConvertMp3ToWave(mp3Path);
+                    //_videoConverter.ConvertMp3ToWave(mp3Path);
                 break;
 
                 case 3:

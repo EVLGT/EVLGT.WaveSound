@@ -6,7 +6,7 @@ namespace WaveSound.Client
     {
         private static void Main(string[] args)
         {
-            var videoConverter = new VideoDownloader();
+            var videoConverter = new VideoConverter();
             var presentationHandler = new PresentationHandler(videoConverter);
 
             presentationHandler.ShowMenu();
