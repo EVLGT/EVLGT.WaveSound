@@ -6,10 +6,10 @@ namespace WaveSound.Client
     {
         private static void Main(string[] args)
         {
-            var videoConverter = new VideoConverter();
+            var videoConverter = new VideoDownloader();
             var presentationHandler = new PresentationHandler(videoConverter);
 
-            presentationHandler.OnBoarding();
+            presentationHandler.ShowMenu();
         }
     }
 }

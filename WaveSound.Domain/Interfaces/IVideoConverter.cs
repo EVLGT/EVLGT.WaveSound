@@ -2,6 +2,8 @@
 {
     public interface IVideoConverter
     {
-        void ConvertToWave(string videoUrl);
+        void ConvertYoutubeToMp3(string videoUrl);
+
+        void ConvertMp3ToWave(string mp3Path);
     }
 }
