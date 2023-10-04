@@ -2,14 +2,16 @@
 
 namespace WaveSound.Client
 {
-    public class Program
+    public static class Program
     {
-        private static void Main(string[] args)
+        private static async Task Main()
         {
+            Console.Title = "WaveSound v1-ALPHA by dariokrie";
+
             var videoConverter = new VideoConverter();
             var presentationHandler = new PresentationHandler(videoConverter);
 
-            presentationHandler.OnBoarding();
+            await presentationHandler.ShowMenu();
         }
     }
 }

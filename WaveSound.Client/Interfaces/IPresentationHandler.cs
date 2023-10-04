@@ -2,6 +2,6 @@
 {
     public interface IPresentationHandler
     {
-        void OnBoarding();
+        Task ShowMenu();
     }
 }

@@ -2,6 +2,6 @@
 {
     public interface IVideoConverter
     {
-        void ConvertToWave(string videoUrl);
+        Task ConvertToWaveAsync(string videoUrl);
     }
 }

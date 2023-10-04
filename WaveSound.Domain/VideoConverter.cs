@@ -1,21 +1,31 @@
-﻿using NAudio.Wave;
-using WaveSound.Common;
+﻿using SoundCloudExplode;
+using WaveSound.Common.Constants;
+using WaveSound.Domain.Exceptions;
 using WaveSound.Domain.Interfaces;
-using YoutubeExplode;
-using YoutubeExplode.Videos.Streams;
 
 namespace WaveSound.Domain
 {
-    public class VideoConverter : IVideoConverter // WIP
+    public class VideoConverter : IVideoConverter
     {
-        public async void ConvertToWave(string videoUrl)
+        public async Task ConvertToWaveAsync(string videoUrl)
         {
-            var youtube = new YoutubeClient();
-            var videoInfo = await youtube.Videos.GetAsync(videoUrl);
-            var streamManifest = await youtube.Videos.Streams.GetManifestAsync(videoUrl);
-            var streamInfo = streamManifest.GetAudioOnlyStreams().GetWithHighestBitrate(); //audioStream
+            var soundcloud = new SoundCloudClient();
 
-            await youtube.Videos.Streams.DownloadAsync(streamInfo, SavePathConstants.FILE_SAVE_PATH);
+            if (await soundcloud.Tracks.IsUrlValidAsync(videoUrl))
+            {
+                var track = await soundcloud.Tracks.GetAsync(videoUrl) ?? throw new TrackIsNullException();
+                var trackName = PathEx.EscapeFileName(track.Title!);
+                var trackPath = Path.Join(SavePathConstants.FILE_SAVE_PATH, $"{trackName}.wav");
+
+                await soundcloud.DownloadAsync(track, trackPath);
+
+                await Console.Out.WriteLineAsync($"Save to: " + trackPath);
+            }
+
+            else
+            {
+                throw new BadUrlException();
+            }
         }
     }
 }
