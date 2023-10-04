@@ -1,7 +1,7 @@
-﻿using System.Transactions;
-using WaveSound.Client.Interfaces;
+﻿using WaveSound.Client.Interfaces;
 using WaveSound.Common.Constants;
 using WaveSound.Domain.Interfaces;
+using WaveSound.Domain.Exceptions;
 
 namespace WaveSound.Client
 {
@@ -14,59 +14,74 @@ namespace WaveSound.Client
             _videoConverter = videoConverter;
         }
 
-        public void ShowMenu()
-        {
-            Console.WriteLine(@"---------- WaveSound ----------
-Choose your action:
-    1. Convert YT to MP3
-    2. Convert MP3 to WAVE
-    3. Close Software");
-
-            var inputOption = EnterOption();
-            ProcessMenuInput(inputOption);
-        }
-
-        private int EnterOption()
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Blocker Bug", "S2190:Loops and recursions should not be infinite", Justification = "<Pending>")]
+        public async Task ShowMenu()
         {
             while (true)
             {
-                if (IsValidOption(3, out int option)) { return option; }
+                Console.WriteLine(@"---------- WaveSound ----------
+    Choose your action:
+        1. Convert SoundCloud to WaveSound (.wav)
+        2. Close Software");
 
-                else { MangageInvalidInput(); }
+                var inputOption = EnterOption();
+                await ProcessMenuInput(await inputOption);
             }
         }
 
-        private void MangageInvalidInput()
+        private async Task<int> EnterOption()
+        {
+            while (true)
+            {
+                if (IsValidOption(2, out int option)) { return option; }
+
+                else { await MangageInvalidInput(); }
+            }
+        }
+
+        private async Task MangageInvalidInput()
         {
             Console.WriteLine(ClientMessages.INVALID_MENUOPTION);
 
             var inputOption = EnterOption();
-            ProcessMenuInput(inputOption);
+            await ProcessMenuInput(await inputOption);
         }
 
         private async Task ProcessMenuInput(int inputOption)
         {
-            switch (inputOption)
+            while (true)
             {
-                case 1:
-                    var videoUrl = GetYoutubeVideoUrl();
+                try
+                {
+                    switch (inputOption)
+                    {
+                        case 1:
+                            var videoUrl = GetSoundCloudUrl();
             
-                    await _videoConverter.ConvertToMp3Async(videoUrl);
-                break;
+                            await _videoConverter.ConvertToWaveAsync(videoUrl);
+                        break;
 
-                case 2:
-                    var mp3Path = GetMp3FilePath();
+                        case 2:
+                            Environment.Exit(0);
+                        break;
+                    }
 
-                    //_videoConverter.ConvertMp3ToWave(mp3Path);
-                break;
+                    break;
+                }
 
-                case 3:
-                    Environment.Exit(0);
-                break;
+                catch (BadUrlException)
+                {
+                    await Console.Out.WriteLineAsync(ClientMessages.BADURL_TEXT);
+                }
+
+                catch (TrackIsNullException) 
+                {
+                    await Console.Out.WriteLineAsync(ClientMessages.TRACKISNULL_TEXT);
+                }
             }
         }
 
-        private bool IsValidOption(int maxOption, out int option)
+        private static bool IsValidOption(int maxOption, out int option)
         {
             bool isValidOption = int.TryParse(Console.ReadLine(), out option);
 
@@ -81,18 +96,11 @@ Choose your action:
             }
         }
 
-        private string GetMp3FilePath()
+        private static string GetSoundCloudUrl()
         {
-            Console.Write("Enter MP3 File Path: ");
+            Console.Write("Enter SoundCloud Track URL: ");
 
-            return Console.ReadLine();
-        }
-
-        private string GetYoutubeVideoUrl()
-        {
-            Console.Write("Enter YouTube Video URL: ");
-
-            return Console.ReadLine();
+            return Console.ReadLine() ?? "";
         }
     }
 }

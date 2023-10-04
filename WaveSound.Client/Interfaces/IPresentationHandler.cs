@@ -2,6 +2,6 @@
 {
     public interface IPresentationHandler
     {
-        void ShowMenu();
+        Task ShowMenu();
     }
 }

@@ -1,26 +1,31 @@
-﻿using WaveSound.Common.Constants;
+﻿using SoundCloudExplode;
+using WaveSound.Common.Constants;
+using WaveSound.Domain.Exceptions;
 using WaveSound.Domain.Interfaces;
-using YoutubeDLSharp;
-using YoutubeDLSharp.Options;
 
 namespace WaveSound.Domain
 {
-    public class VideoConverter : IVideoConverter // WIP
+    public class VideoConverter : IVideoConverter
     {
-        public async Task ConvertToMp3Async(string videoUrl)
+        public async Task ConvertToWaveAsync(string videoUrl)
         {
-            var ytdl = new YoutubeDL
+            var soundcloud = new SoundCloudClient();
+
+            if (await soundcloud.Tracks.IsUrlValidAsync(videoUrl))
             {
-                // set the path of yt-dlp and FFmpeg if they're not in PATH or current directory
-                YoutubeDLPath = "yt-dlp.exe",
-                FFmpegPath = "ffmpeg.exe",
-                // optional: set a different download folder
-                OutputFolder = SavePathConstants.FILE_SAVE_PATH
-            };
-            // download a video
-            var res = await ytdl.RunAudioDownload(videoUrl, AudioConversionFormat.Mp3);
-            // the path of the downloaded file
-            string path = res.Data;
+                var track = await soundcloud.Tracks.GetAsync(videoUrl) ?? throw new TrackIsNullException();
+                var trackName = PathEx.EscapeFileName(track.Title!);
+                var trackPath = Path.Join(SavePathConstants.FILE_SAVE_PATH, $"{trackName}.wav");
+
+                await soundcloud.DownloadAsync(track, trackPath);
+
+                await Console.Out.WriteLineAsync($"Save to: " + trackPath);
+            }
+
+            else
+            {
+                throw new BadUrlException();
+            }
         }
     }
 }
