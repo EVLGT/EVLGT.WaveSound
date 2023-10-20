@@ -1,5 +1,6 @@
 ﻿using WaveSound.Client.Interfaces;
 using WaveSound.Common.Constants;
+using WaveSound.Domain.Enums;
 using WaveSound.Domain.Interfaces;
 using WaveSound.Domain.Exceptions;
 
@@ -19,10 +20,11 @@ namespace WaveSound.Client
         {
             while (true)
             {
-                Console.WriteLine(@"---------- WaveSound ----------
+                Console.WriteLine(@"---------- WaveSound 3.23 ----------
     Choose your action:
-        1. Convert SoundCloud to WaveSound (.wav)
-        2. Close Software");
+        1. Convert SoundCloud to WaveSound (.wav) (for general use)
+        2. Convert SoundCloud to Mp3 (.mp3) (for Serato DJ Pro)
+        3. Close Software");
 
                 var inputOption = EnterOption();
                 await ProcessMenuInput(await inputOption);
@@ -33,13 +35,13 @@ namespace WaveSound.Client
         {
             while (true)
             {
-                if (IsValidOption(2, out int option)) { return option; }
+                if (IsValidOption(3, out int option)) { return option; }
 
-                else { await MangageInvalidInput(); }
+                await ManageInvalidInput();
             }
         }
 
-        private async Task MangageInvalidInput()
+        private async Task ManageInvalidInput()
         {
             Console.WriteLine(ClientMessages.INVALID_MENUOPTION);
 
@@ -53,15 +55,18 @@ namespace WaveSound.Client
             {
                 try
                 {
+
                     switch (inputOption)
                     {
                         case 1:
-                            var videoUrl = GetSoundCloudUrl();
-            
-                            await _videoConverter.ConvertToWaveAsync(videoUrl);
+                            await _videoConverter.ConvertSoundcloudTrack(GetSoundCloudUrl(), FileType.Wave);
                         break;
 
                         case 2:
+                            await _videoConverter.ConvertSoundcloudTrack(GetSoundCloudUrl(), FileType.Mp3);
+                            break;
+
+                        case 3:
                             Environment.Exit(0);
                         break;
                     }
@@ -90,10 +95,7 @@ namespace WaveSound.Client
                 return true;
             }
 
-            else
-            {
-                return false;
-            }
+            return false;
         }
 
         private static string GetSoundCloudUrl()

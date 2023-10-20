@@ -1,7 +1,9 @@
-﻿namespace WaveSound.Domain.Interfaces
+﻿using WaveSound.Domain.Enums;
+
+namespace WaveSound.Domain.Interfaces
 {
     public interface IVideoConverter
     {
-        Task ConvertToWaveAsync(string videoUrl);
+        Task ConvertSoundcloudTrack(string trackUrl, FileType type);
     }
 }
