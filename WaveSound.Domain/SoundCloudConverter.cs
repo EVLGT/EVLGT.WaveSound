@@ -1,12 +1,11 @@
 ﻿using SoundCloudExplode;
-using WaveSound.Common.Constants;
 using WaveSound.Domain.Enums;
 using WaveSound.Domain.Exceptions;
 using WaveSound.Domain.Interfaces;
 
 namespace WaveSound.Domain
 {
-    public class VideoConverter : IVideoConverter
+    public class SoundCloudConverter : ISoundCloudConverter
     {
         public async Task ConvertSoundcloudTrack(string trackUrl, FileType type)
         {
@@ -31,10 +30,12 @@ namespace WaveSound.Domain
 
         private async Task<string> GetTrackPath(FileType type, string trackName)
         {
+            string saveFilePath = FilePathUpdater.GetSavePath();
+
             return type switch
             {
-                FileType.Wave => Path.Join(SavePathConstants.FILE_SAVE_PATH, $"{trackName}.wav"),
-                FileType.Mp3 => Path.Join(SavePathConstants.FILE_SAVE_PATH, $"{trackName}.mp3"),
+                FileType.Wave => Path.Join(saveFilePath, $"{trackName}.wav"),
+                FileType.Mp3 => Path.Join(saveFilePath, $"{trackName}.mp3"),
                 _ => string.Empty
             };
         }

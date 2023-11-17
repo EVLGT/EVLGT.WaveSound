@@ -2,7 +2,7 @@
 
 namespace WaveSound.Domain.Interfaces
 {
-    public interface IVideoConverter
+    public interface ISoundCloudConverter
     {
         Task ConvertSoundcloudTrack(string trackUrl, FileType type);
     }

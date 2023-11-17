@@ -8,8 +8,9 @@ namespace WaveSound.Client
         {
             Console.Title = "WaveSound v1-ALPHA by dariokrie";
 
-            var videoConverter = new VideoConverter();
-            var presentationHandler = new PresentationHandler(videoConverter);
+            var soundCloudConverter = new SoundCloudConverter();
+            var spotifyConverter = new SpotifyConverter();
+            var presentationHandler = new PresentationHandler(soundCloudConverter, spotifyConverter);
 
             await presentationHandler.ShowMenu();
         }
