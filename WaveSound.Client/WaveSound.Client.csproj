@@ -9,6 +9,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\WaveSound.Domain\WaveSound.Domain.csproj" />
+    <None Include="..\appsettings.json" CopyToPublishDirectory="Always" />
   </ItemGroup>
 
 </Project>
